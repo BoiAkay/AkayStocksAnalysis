@@ -23,12 +23,20 @@ if __name__ == "__main__":
             # ****** to reduce the function call defining getStockReturns() function in same file ******
             tickerCompany = f'{i}.NS'
             company = yf.Ticker(tickerCompany)
+            stockInfo = company.info
+            LTP = stockInfo.get('currentPrice')
             hist = company.history(period=timeTicker)
             try:
                 startPrice = hist[['Close']].iloc[0]['Close']
             except:
                 print(Akaycolours.RED+f'[ERROR] stock data not found for {i}'+Akaycolours.RESET)
                 ExceptionList.append(i)
+                with open(FINAL_DATA, 'a', newline='') as csvfile:
+                    writer = csv.writer(csvfile)
+                    writer.writerow([i, float('-inf'),LTP,(i in nifty50Index)])
+                df = pd.read_csv(FINAL_DATA)
+                df = df.sort_values(by='Return')
+                df.to_csv(FINAL_DATA,index=False)
                 continue
             lastPrice = hist[['Close']].iloc[-1]['Close']
             stockReturn = (lastPrice - startPrice)/startPrice
@@ -39,7 +47,7 @@ if __name__ == "__main__":
             print(Akaycolours.BOLD+Akaycolours.BLUE+f'finding {timeTicker} return for {i} = {stockReturn}')
             with open(FINAL_DATA, 'a', newline='') as csvfile:
                 writer = csv.writer(csvfile)
-                writer.writerow([i, stockReturn,(i in nifty50Index)])
+                writer.writerow([i, float('-inf'),LTP,(i in nifty50Index)])
             df = pd.read_csv(FINAL_DATA)
             df = df.sort_values(by='Return')
             df.to_csv(FINAL_DATA,index=False)
