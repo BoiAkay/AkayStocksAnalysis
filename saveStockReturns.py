@@ -47,7 +47,7 @@ if __name__ == "__main__":
             print(Akaycolours.BOLD+Akaycolours.BLUE+f'finding {timeTicker} return for {i} = {stockReturn}')
             with open(FINAL_DATA, 'a', newline='') as csvfile:
                 writer = csv.writer(csvfile)
-                writer.writerow([i, float('-inf'),LTP,(i in nifty50Index)])
+                writer.writerow([i, stockReturn,LTP,(i in nifty50Index)])
             df = pd.read_csv(FINAL_DATA)
             df = df.sort_values(by='Return')
             df.to_csv(FINAL_DATA,index=False)
